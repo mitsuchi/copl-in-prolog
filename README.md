@@ -40,3 +40,10 @@ true
 
 例）
 ```s(z) isLessThan s(s(z))```
+
+## EvalNatExp.pl
+
+第1章の EvalNatExp の実装です。足し算と掛け算からなる式を評価します。
+
+例）
+```s(s(z)) + z ⇓ s(s(z))```
