@@ -47,3 +47,10 @@ true
 
 例）
 ```s(s(z)) + z ⇓ s(s(z))```
+
+## ReduceNatExp.pl
+
+第1章の ReduceNatExp の実装です。足し算と掛け算からなる式を簡約します。
+
+例）
+```s(z) * s(z) + s(z) * s(z) --> s(z) * s(z) + s(z)```
