@@ -75,3 +75,10 @@ true
 
 例）
 ```let rec fib = fun n -> if n < 2 then n else fib (n - 1) + fib (n - 2) in fib 10```
+
+## EvalML4.pl
+
+第7章の EvalML4 の実装です。リストとパターンマッチを評価します。
+
+例）
+```match 1 :: 2 :: 3 :: [] with [] -> 4 | a :: b -> a```
