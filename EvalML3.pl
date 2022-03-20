@@ -80,25 +80,25 @@ _ ⱶ int(I) ⇩ I.
 % C ⱶ b ⇩ b
 _ ⱶ bool(B) ⇩ B.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 plus i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 plus i2 is i3
 % ------------------------------------------------
 % C ⱶ e1 + e2 ⇩ i3
 C ⱶ E1 + E2 ⇩ I3 :-
     C ⱶ E1 ⇩ I1, C ⱶ E2 ⇩ I2, I1 plus I2 is I3.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 minus i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 minus i2 is i3
 % -------------------------------------------------
 % C ⱶ e1 - e2 ⇩ i3
 C ⱶ E1 - E2 ⇩ I3 :-
     C ⱶ E1 ⇩ I1, C ⱶ E2 ⇩ I2, I1 minus I2 is I3.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 times i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 times i2 is i3
 % -------------------------------------------------
 % C ⱶ e1 * e2 ⇩ i3
 C ⱶ E1 * E2 ⇩ I3 :-
     C ⱶ E1 ⇩ I1, C ⱶ E2 ⇩ I2, I1 times I2 is I3.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 less than i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 less than i2 is i3
 % -----------------------------------------------------
 % C ⱶ e1 < e2 ⇩ i3
 C ⱶ E1 < E2 ⇩ B :-
@@ -116,7 +116,7 @@ C ⱶ if(E1, E2, _) ⇩ V :-
 C ⱶ if(E1, _, E3) ⇩ V :-
     C ⱶ E1 ⇩ false, C ⱶ E3 ⇩ V.
 
-% C ⱶ e1 ⇩ v1   x = v1, C ⱶ e3 ⇩ v
+% C ⱶ e1 ⇩ v1   C, x = v1 ⱶ e3 ⇩ v
 % --------------------------------
 % C ⱶ let x = e1 in e2 ⇩ v
 C ⱶ let(X = E1 in E2) ⇩ V :-
@@ -141,9 +141,8 @@ C ⱶ letrec(X = fun(Y -> E1) in E2) ⇩ V :-
 C ⱶ fun(X -> E) ⇩ cls(C, fun(X -> E)).
 
 % C ⱶ e1 ⇩ (C2) [fun x -> e0]
-% C ⱶ e2 ⇩ v2
-% C2, x = v2 ⱶ e0 ⇩ v
-% ---------------------------
+% C ⱶ e2 ⇩ v2   C2, x = v2 ⱶ e0 ⇩ v
+% ---------------------------------
 % C ⱶ e1 e2 ⇩ v
 C ⱶ app(E1, E2) ⇩ V :-
     C ⱶ E1 ⇩ cls(C2, fun(X -> E0)),

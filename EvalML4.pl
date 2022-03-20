@@ -54,7 +54,7 @@ alnums([C])    --> alpha(C) | digit(C).
 alpha(C) --> [C], { code_type(C, alpha) }.
 
 % parse
-% expr ::= term | expr + term| expr - term | expr < term | term :: expr
+% expr ::= term | expr + term | expr - term | expr < term | term :: expr
 expr(E)      --> term(T), expr1(T, E).
 expr(T :: E) --> term(T), [::], expr(E).
 expr1(E1, E) --> "<", term(T), expr1(E1 < T, E).
@@ -84,12 +84,19 @@ farg(bool(B)) --> [bool(B)].
 farg(var(X)) --> [var(X)].
 farg(E) --> "(", expr(E), ")".
 farg(nil) --> "[]".
+% if e1 then e2 else e3
 farg(if(E1, E2, E3)) -->
     [if], expr(E1), [then], expr(E2), [else], expr(E3).
-farg(let(X = E1 in E2)) --> [let, var(X), =], expr(E1), [in], expr(E2).  
+% let x = e1 in e2
+farg(let(X = E1 in E2)) -->
+    [let, var(X), =], expr(E1), [in], expr(E2).
+% let rec x = fun y -> e1 in e2
 farg(letrec(X = fun(Y -> E1) in E2)) -->
     [let, rec, var(X), =, fun, var(Y), ->], expr(E1), [in], expr(E2).
-farg(fun(X -> E)) --> [fun, var(X), ->], expr(E).
+% fun x -> e
+farg(fun(X -> E)) -->
+    [fun, var(X), ->], expr(E).
+% match e1 with [] -> e2 | x :: y -> e3
 farg(match(E1 with [] -> E2, X :: Y -> E3)) -->
     [match], expr(E1), [with, '[', ']', ->], expr(E2),
     ['|', var(X), ::, var(Y), ->], expr(E3).
@@ -116,13 +123,13 @@ C ⱶ E1 + E2 ⇩ I3 :-
 C ⱶ (E1 - E2) ⇩ I3 :-
     C ⱶ E1 ⇩ I1, C ⱶ E2 ⇩ I2, I1 minus I2 is I3.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 times i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 times i2 is i3
 % ------------------------------------------------- E-Times
 % C ⱶ e1 * e2 ⇩ i3
 C ⱶ E1 * E2 ⇩ I3 :-
     C ⱶ E1 ⇩ I1, C ⱶ E2 ⇩ I2, I1 times I2 is I3.
 
-% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   C ⱶ i1 less than i2 is i3
+% C ⱶ e1 ⇩ i1   C ⱶ e2 ⇩ i2   i1 less than i2 is i3
 % ----------------------------------------------------- E-LessThan
 % C ⱶ e1 < e2 ⇩ i3
 C ⱶ (E1 < E2) ⇩ B :-
@@ -140,7 +147,7 @@ C ⱶ if(E1, E2, _) ⇩ V :-
 C ⱶ if(E1, _, E3) ⇩ V :-
     C ⱶ E1 ⇩ false, C ⱶ E3 ⇩ V.
 
-% C ⱶ e1 ⇩ v1   x = v1, C ⱶ e2 ⇩ v
+% C ⱶ e1 ⇩ v1   C, x = v1 ⱶ e2 ⇩ v
 % -------------------------------- E-Let
 % C ⱶ let x = e1 in e2 ⇩ v
 C ⱶ let(X = E1 in E2) ⇩ V :-
@@ -166,8 +173,9 @@ C ⱶ letrec(X = fun(Y -> E1) in E2) ⇩ V :-
 % C ⱶ fun x -> e ⇩ (C) [fun x -> e]
 C ⱶ fun(X -> E) ⇩ cls(C, fun(X -> E)).
 
-% C ⱶ e1 ⇩ (C2) [fun x -> e0]   C ⱶ e2 ⇩ v2   C2, x = v2 ⱶ e0 ⇩ v
-% --------------------------------------------------------------- E-App
+% C ⱶ e1 ⇩ (C2) [fun x -> e0]   
+% C ⱶ e2 ⇩ v2   C2, x = v2 ⱶ e0 ⇩ v
+% --------------------------------- E-App
 % C ⱶ e1 e2 ⇩ v
 C ⱶ app(E1, E2) ⇩ V :-
     C ⱶ E1 ⇩ cls(C2, fun(X -> E0)),
@@ -187,7 +195,7 @@ C ⱶ app(E1, E2) ⇩ V :-
 % C ⱶ [] ⇩ []
 _ ⱶ nil ⇩ [].
 
-% C ⱶ e1 ⇩ v1, C ⱶ e2 ⇩ v2
+% C ⱶ e1 ⇩ v1   C ⱶ e2 ⇩ v2
 % ------------------------ E-Cons
 % C ⱶ e1 :: e2 ⇩ v1 :: v2
 C ⱶ E1 :: E2 ⇩ [V1 | V2] :-
@@ -203,27 +211,32 @@ C ⱶ match(E1 with [] -> E2, _ :: _ -> _) ⇩ V :-
 % ----------------------------------------------- E-MatchCons
 % C ⱶ match e1 with [] -> e2 | x :: y -> e3 ⇩ v
 C ⱶ match(E1 with [] -> _, X :: Y -> E3) ⇩ V :-
-    C ⱶ E1 ⇩ [V1 | V2], [X = V1, Y = V2 | C] ⱶ E3 ⇩ V.
+    C ⱶ E1 ⇩ [V1 | V2],
+    [X = V1, Y = V2 | C] ⱶ E3 ⇩ V.
 
 % (i3 = i1 + i2)
 % ---------------- B-Plus
 % i1 plus i2 is i3
-I1 plus I2 is I3 :- I3 is I1 + I2.
+I1 plus I2 is I3 :-
+    I3 is I1 + I2.
 
 % (i3 = i1 - i2)
 % ---------------- B-Minus
 % i1 minus i2 is i3
-I1 minus I2 is I3 :- I3 is I1 - I2.
+I1 minus I2 is I3 :-
+     I3 is I1 - I2.
 
 % (i3 = i1 * i2)
 % ---------------- B-Times
 % i1 times i2 is i3
-I1 times I2 is I3 :- I3 is I1 * I2.
+I1 times I2 is I3 :-
+     I3 is I1 * I2.
 
 % (b3 = i1 < i2)
 % ---------------- B-LessThan
 % i1 less than i2 is b3
-I1 lessThan I2 is B :- I1 < I2 -> B = true; B = false.
+I1 lessThan I2 is B :-
+     I1 < I2 -> B = true; B = false.
 
 % UI
 code_result(Code, Result) :-
