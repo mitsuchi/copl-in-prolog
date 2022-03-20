@@ -5,6 +5,9 @@
 :- op(800,xfx, minus).
 :- op(800,xfx, times).
 :- op(800,xfx, lessThan).
+:- op(800,xfx, matches).
+:- op(800,xfx, doesntMatch).
+:- op(900,xfx, when).
 :- op(900,xfx, in).
 :- op(900,xfx, with).
 :- op(990,xfx, ⱶ).
@@ -217,30 +220,30 @@ C ⱶ E1 :: E2 ⇩ [V1 | V2] :-
 
 C ⱶ match(E0 with [P -> E]) ⇩ V1 :-
     C ⱶ E0 ⇩ V,
-    eval_match(P, V, C1),
+    P matches V when C1,
     append(C1, C, C2),    % (E2 = E ; E1) , 左が先頭なので E と E1 は逆順になる
     C2 ⱶ E ⇩ V1.          % E2 |- e ⇩ v'
 C ⱶ match(E0 with [(P -> E) | _]) ⇩ V1 :-
     C ⱶ E0 ⇩ V,
-    eval_match(P, V, C1),   
+    P matches V when C1,   
     append(C1, C, C2),    % (E2 = E ; E1) , 左が先頭なので E と E1 は逆順になる
     C2 ⱶ E ⇩ V1.          % E2 |- e ⇩ v'
 C ⱶ match(E0 with [(P -> _) | Cs]) ⇩ V1 :-
     C ⱶ E0 ⇩ V,
-    eval_nmatch(P, V),
+    P doesntMatch V,
     C ⱶ match(E0 with Cs) ⇩ V1.
 
-eval_match(var(X), V, [X = V]). % X matches V when [X = V]
-eval_match(nil, [], []).       % [] matches [] when []
-eval_match(wildcard, _, []).    % _ matches v when []
-eval_match(P1 :: P2, [V1 | V2], C) :-
-    eval_match(P1, V1, C1), eval_match(P2, V2, C2),
+var(X) matches V when [X = V]. % X matches V when [X = V]
+nil matches [] when [].        % [] matches [] when []
+wildcard matches _ when [].    % _ matches v when []
+P1 :: P2 matches [V1 | V2] when C :-
+    P1 matches V1 when C1, P2 matches V2 when C2,
     xunion(C1, C2, C).
 
-eval_nmatch(nil, [_|_]). % [] doesn't match V1 :: V2
-eval_nmatch(_ :: _, []). % P1 :: P2 doesn't match []
-eval_nmatch(P1 :: _, [V1 | _]) :- eval_nmatch(P1, V1).
-eval_nmatch(_ :: P2, [_ | V2]) :- eval_nmatch(P2, V2).
+nil doesntMatch [_|_]. % [] doesn't match V1 :: V2
+_ :: _ doesntMatch []. % P1 :: P2 doesn't match []
+P1 :: _ doesntMatch [V1 | _] :- P1 doesntMatch V1.
+_ :: P2 doesntMatch [_ | V2] :- P2 doesntMatch V2.
 
 xunion(E1, E2, E3) :-
     append(E1, E2, E3),
