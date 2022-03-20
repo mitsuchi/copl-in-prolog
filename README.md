@@ -68,3 +68,10 @@ true
 
 例）
 ```let x = 1 in x + 2```
+
+## EvalML3.pl
+
+第5章の EvalML3 の実装です。（再起的）関数の定義と適用を評価します。
+
+例）
+```let rec fib = fun n -> if n < 2 then n else fib (n - 1) + fib (n - 2) in fib 10```
