@@ -55,9 +55,16 @@ true
 例）
 ```s(z) * s(z) + s(z) * s(z) --> s(z) * s(z) + s(z)```
 
-## EvalNat1.pl
+## EvalML1.pl
 
-第3章の NatExp の実装です。整数とif式を評価します。
+第3章の EvalML1 の実装です。整数とif式を評価します。
 
 例）
 ```if 1 < 2 then 3 else 4```
+
+## EvalML2.pl
+
+第4章の EvalML2 の実装です。let式を評価します。
+
+例）
+```let x = 1 in x + 2```
