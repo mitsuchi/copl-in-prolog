@@ -54,3 +54,10 @@ true
 
 例）
 ```s(z) * s(z) + s(z) * s(z) --> s(z) * s(z) + s(z)```
+
+## EvalNat1.pl
+
+第3章の NatExp の実装です。整数とif式を評価します。
+
+例）
+```if 1 < 2 then 3 else 4```
