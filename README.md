@@ -122,3 +122,20 @@ in max (1 :: 2 :: 3 :: [])
 ```
 fun f -> f 0 + f 1 : (int -> int) -> int
 ```
+
+## PolyTypingML4.pl
+
+第9章の PolyTypingML4 の実装です。多相の型システムの型付けを判断します。
+
+例）
+```
+let id = fun x -> x in id id : bool -> bool
+```
+
+Prolog の機能によりそのまま型推論ができます。
+
+例）
+```
+?- infer("let id = fun x -> x in id", W).
+W = "a.a->a" .
+```
