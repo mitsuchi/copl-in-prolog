@@ -101,7 +101,7 @@ match 1 :: 2 :: 3 :: [] with [] -> 4 | a :: b -> a
 
 ## EvalML5.pl
 
-第8章の EvalML5 の実装です。より一般的なパターンマッチを評価します。
+第7章の EvalML5 の実装です。より一般的なパターンマッチを評価します。
 
 例）
 ```
@@ -112,4 +112,13 @@ let rec max = fun l -> match l with
     then max (y :: z)
     else max (x :: z)
 in max (1 :: 2 :: 3 :: [])
+```
+
+## TypingML4.pl
+
+第8章の TypingML4 の実装です。単相の型システムの型付けを判断します。
+
+例）
+```
+fun f -> f 0 + f 1 : (int -> int) -> int
 ```
