@@ -132,10 +132,10 @@ fun f -> f 0 + f 1 : (int -> int) -> int
 let id = fun x -> x in id id : bool -> bool
 ```
 
-Prolog の機能によりそのまま型推論ができます。
+おまけで型推論もできます。
 
 例）
 ```
-?- infer("let id = fun x -> x in id", W).
-W = "a.a->a" .
+?- infer("let k = fun x -> fun y -> x in k", W).
+W = "ab.a->b->a" .
 ```
