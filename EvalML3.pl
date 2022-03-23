@@ -203,4 +203,5 @@ tests :-
     test("(fun x -> fun y -> x + y) 1 2", 3),
     test("let rec fact = fun n -> if n < 2 then 1 else n * fact (n - 1) in fact 5", 120),
     test("let rec fib = fun n -> if n < 2 then n else fib (n - 1) + fib (n - 2) in fib 10", 55),
+    test("let fact = fun self -> fun n -> if n < 2 then 1 else n * self self (n - 1) in fact fact 3", W),
     test("1", 1).    
