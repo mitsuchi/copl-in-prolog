@@ -1,4 +1,5 @@
 :- op(800,xfx,isLessThan).
+:- op(600,xfx,~>).
 
 % ------------------- L-Succ
 % n is less than S(n)
